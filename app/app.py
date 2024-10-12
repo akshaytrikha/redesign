@@ -3,7 +3,11 @@ from openai import OpenAI
 from flask import Flask, render_template, request, jsonify
 import re
 
-website_folder_name = ""
+# External
+from flask import Flask, render_template, request, jsonify
+
+# Internal
+from scrape import fetch_source
 
 app = Flask(__name__)
 
@@ -15,12 +19,18 @@ def home():
 def scrape():
     # Get the URL from the form
     url = request.form.get('url')
-    
+    if not url:
+        return jsonify({"status": "error", "message": "No URL provided."}), 400
+
     # Call the function from scrape.py
-    result = scrape_function(url)
-    
-    # Return some response (you can customize this as needed)
-    return result
+    result = fetch_source(url)
+
+    # Return JSON response
+    if result["status"] == "success":
+        return jsonify(result), 200
+    else:
+        return jsonify(result), 400
+
 
 criteria="""Usability
 Explanation: The interface should be intuitive and easy to use, allowing users to achieve their goals effectively and efficiently without unnecessary complexity.
@@ -187,7 +197,7 @@ def dashboard_content():
     data = request.get_json()
     if not data or 'website_code' not in data:
         return jsonify({'error': 'No website code provided'}), 400
-    overall_improvement_output, overall_scores_output = give_improvement_ideas(website_code)
+    overall_improvement_output, overall_scores_output = give_improvement_ideas("silverpizzeria.com")
     categories_and_scores = re.findall(r'(.+?):\s*(\d+)', overall_scores_output)
     results = {key.strip(): int(value) for key, value in categories_and_scores}
     return jsonify({

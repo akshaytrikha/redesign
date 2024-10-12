@@ -1,9 +1,10 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Simple UI</title>
+    <title>Redesign</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/styles.css') }}"
@@ -22,7 +23,7 @@
         To set your experiment up for success, we'll scan and analyze your site
         to understand its content.
       </p>
-      <form action="/scrape" method="POST">
+      <form action="/your_endpoint" method="POST">
         <input
           type="url"
           name="url"

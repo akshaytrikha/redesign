@@ -9,7 +9,7 @@ def create_directory(path):
     try:
         os.makedirs(path)
     except FileExistsError as e:
-        raise FileExistsError(f"The directory '{path}' already exists.") from e
+        return False
 
 def get_filename_from_url(url):
     return os.path.basename(url.split("?")[0])
@@ -24,19 +24,25 @@ def download_file(session, url, save_path):
     except requests.RequestException as e:
         print(f"Failed to download {url}: {e}")
 
+def get_foldername(url):
+    """Returns the folder name for the website source code."""
+    match = re.search(r'(?:https?://)?(?:www\.)?([^/]+)/', url)
+    if not match:
+        return {"status": "error", "message": "Invalid URL format."}
+    return match.group(1)
+
 def fetch_source(url):
     """Fetch HTML, CSS, JS, and images from a website and save them locally."""
     try:
-        match = re.search(r'(?:https?://)?(?:www\.)?([^/]+)/', url)
-        if not match:
-            return {"status": "error", "message": "Invalid URL format."}
-        website_name = match.group(1)
+        website_name = get_foldername(url)
 
         session = requests.Session()
         session.headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64)'})
 
         # Create output directories
-        create_directory(website_name)
+        create_dir_response = create_directory(website_name)
+        if not create_dir_response:
+            return {"status": "success", "message": "Folder already exists."}
         css_dir = os.path.join(website_name, 'css')
         js_dir = os.path.join(website_name, 'js')
         images_dir = os.path.join(website_name, 'images')

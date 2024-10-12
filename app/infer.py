@@ -1,7 +1,3 @@
-import tiktoken
-from openai import OpenAI
-import os
-
 criteria="""Usability
 Explanation: The interface should be intuitive and easy to use, allowing users to achieve their goals effectively and efficiently without unnecessary complexity.
 Key Aspects: Ease of Learning: New users should be able to learn how to use the interface quickly.
@@ -76,14 +72,18 @@ def create_chunks(input_code, chunk_size=125000, model_name='gpt-4o'):
     return string_chunks
 
 
-def give_improvement_ideas(filename):
+def give_improvement_ideas(url):
     input_code = ""
-    for root, _, files in os.walk(filename):
+    print(url)
+    for root, _, files in os.walk(url):
         for file in files:
+            print(file)
             file_path = os.path.join(root, file)
+            print(file_path)
             try:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                     input_code += f.read() + '\n'
+                    print(input_code)
             except Exception as e:
                 print(f"Could not read file {file_path}: {e}")
     chunks = create_chunks(input_code)
@@ -91,6 +91,7 @@ def give_improvement_ideas(filename):
     overall_summary_output = ""
     overall_scores_output = ""
     for i, chunk in enumerate(chunks):
+        print(i)
         improvement_prompt = f"""
             You are an expert web developer. Based on the following website code,
             provide user interface/user experience improvement ideas for the 

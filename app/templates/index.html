@@ -1,25 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Simple UI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+  </head>
+  <body>
     <div class="container">
-        <div class="step-indicator">
-            <div class="step active">1</div>
-            <div class="step">2</div>
-            <div class="step">3</div>
-            <div class="step">4</div>
-        </div>
-        <h1>Enter the URL</h1>
-        <p>To set your experiment up for success, we'll scan and analyze your site to understand its content.</p>
-        <form action="/your_endpoint" method="POST">
-            <input type="url" name="url" placeholder="E.g. https://www.example.com" required>
-            <button type="submit">Next</button>
-        </form>
+      <div class="step-indicator">
+        <div class="step active">1</div>
+        <div class="step">2</div>
+        <div class="step">3</div>
+        <div class="step">4</div>
+      </div>
+      <h1>Enter the URL</h1>
+      <p>
+        To set your experiment up for success, we'll scan and analyze your site
+        to understand its content.
+      </p>
+      <form action="/scrape" method="POST">
+        <input
+          type="url"
+          name="url"
+          placeholder="E.g. https://www.example.com"
+          required
+        />
+        <button type="submit">Next</button>
+      </form>
     </div>
-</body>
+  </body>
 </html>

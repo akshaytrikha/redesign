@@ -2,6 +2,7 @@ import tiktoken
 from openai import OpenAI
 from flask import Flask, render_template, request, jsonify
 import re
+import os
 
 # External
 from flask import Flask, render_template, request, jsonify
@@ -106,7 +107,16 @@ def create_chunks(input_code, chunk_size=125000, model_name='gpt-4o'):
     return string_chunks
 
 
-def give_improvement_ideas(input_code):
+def give_improvement_ideas(filename):
+    input_code = ""
+    for root, _, files in os.walk(filename):
+        for file in files:
+            file_path = os.path.join(root, file)
+            try:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    input_code += f.read() + '\n'
+            except Exception as e:
+                print(f"Could not read file {file_path}: {e}")
     chunks = create_chunks(input_code)
     overall_improvement_output = ""
     overall_summary_output = ""
@@ -192,18 +202,11 @@ def give_improvement_ideas(input_code):
             overall_scores_output += scores_output
     return overall_improvement_output, overall_scores_output
 
-@app.route('/dashboard-content', methods=['POST'])
-def dashboard_content():
-    data = request.get_json()
-    if not data or 'website_code' not in data:
-        return jsonify({'error': 'No website code provided'}), 400
+@app.route('/feedback', methods=['GET'])
+def feedback():
     overall_improvement_output, overall_scores_output = give_improvement_ideas("silverpizzeria.com")
-    categories_and_scores = re.findall(r'(.+?):\s*(\d+)', overall_scores_output)
-    results = {key.strip(): int(value) for key, value in categories_and_scores}
-    return jsonify({
-        'scores': results,
-        'improvement_ideas': overall_improvement_output
-    })
+    scores = [int(score) for score in re.findall(r'\b\d+\b', overall_scores_output)]
+    return render_template('feedback.html', scores=scores, ideas=overall_improvement_output)
 
 if __name__ == '__main__':
     app.run(debug=True)

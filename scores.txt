@@ -1,0 +1,10 @@
+Usability: 70  
+Consistency: 75  
+Clarity: 65  
+Feedback: 60  
+Accessibility: 72  
+Responsiveness: 68  
+Aesthetic Design: 70  
+Error Prevention and Handling: 67  
+Flexibility and Efficiency: 65  
+User Control and Freedom: 62  

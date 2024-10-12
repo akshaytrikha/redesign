@@ -1,6 +1,8 @@
 import tiktoken
 from openai import OpenAI
 import os
+import re
+from pathlib import Path
 
 criteria="""Usability
 Explanation: The interface should be intuitive and easy to use, allowing users to achieve their goals effectively and efficiently without unnecessary complexity.
@@ -76,21 +78,58 @@ def create_chunks(input_code, chunk_size=125000, model_name='gpt-4o'):
     return string_chunks
 
 
+def minify_html(html_content):
+    # Remove HTML comments
+    html_content = re.sub(r'<!--.*?-->', '', html_content, flags=re.DOTALL)
+    # Remove extra whitespaces and newlines
+    html_content = re.sub(r'\s+', ' ', html_content)
+    return html_content.strip()
+
+
+def minify_css(css_content):
+    # Remove CSS comments
+    css_content = re.sub(r'/\*.*?\*/', '', css_content, flags=re.DOTALL)
+    # Remove extra spaces, newlines, and tabs
+    css_content = re.sub(r'\s+', ' ', css_content)
+    # Remove spaces around symbols like {}, :, ; , >
+    css_content = re.sub(r'\s*([{}:;>])\s*', r'\1', css_content)
+    return css_content.strip()
+
+
+def minify_js(js_content):
+    # Remove JavaScript comments (both single-line and multi-line)
+    js_content = re.sub(r'//.*?\n|/\*.*?\*/', '', js_content, flags=re.DOTALL)
+    # Remove extra spaces and newlines
+    js_content = re.sub(r'\s+', ' ', js_content)
+    # Remove spaces around symbols like {}, :, ; , >
+    js_content = re.sub(r'\s*([{}:;,\(\)\[\]=+])\s*', r'\1', js_content)
+    return js_content.strip()
+
+def minify(content, suffix):
+    if suffix == '.html':
+        return minify_html(content)
+    elif suffix == '.css':
+        return minify_css(content)
+    elif suffix == '.js':
+        return minify_js(content)
+    else:
+        raise ValueError('Unsupported content type. Use "html", "css", or "js".')
+
+
 def give_improvement_ideas(url):
     input_code = ""
-    print(url)
     for root, _, files in os.walk(url):
         for file in files:
-            print(file)
             file_path = os.path.join(root, file)
-            print(file_path)
             try:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                    input_code += f.read() + '\n'
-                    print(input_code)
+                    minified_code = minify(f.read(), Path(file_path).suffix)
+                    input_code += minified_code + '\n'
             except Exception as e:
                 print(f"Could not read file {file_path}: {e}")
+
     chunks = create_chunks(input_code)
+
     overall_improvement_output = ""
     overall_summary_output = ""
     overall_scores_output = ""
@@ -175,3 +214,6 @@ def give_improvement_ideas(url):
             scores_output = completion.choices[0].message.content
             overall_scores_output += scores_output
     return overall_improvement_output, overall_scores_output
+
+
+give_improvement_ideas("sliverpizzeria.com")

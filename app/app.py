@@ -107,14 +107,18 @@ def create_chunks(input_code, chunk_size=125000, model_name='gpt-4o'):
     return string_chunks
 
 
-def give_improvement_ideas(filename):
+def give_improvement_ideas(url):
     input_code = ""
-    for root, _, files in os.walk(filename):
+    print(url)
+    for root, _, files in os.walk(url):
         for file in files:
+            print(file)
             file_path = os.path.join(root, file)
+            print(file_path)
             try:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                     input_code += f.read() + '\n'
+                    print(input_code)
             except Exception as e:
                 print(f"Could not read file {file_path}: {e}")
     chunks = create_chunks(input_code)
@@ -122,6 +126,7 @@ def give_improvement_ideas(filename):
     overall_summary_output = ""
     overall_scores_output = ""
     for i, chunk in enumerate(chunks):
+        print(i)
         improvement_prompt = f"""
             You are an expert web developer. Based on the following website code,
             provide user interface/user experience improvement ideas for the 
@@ -202,11 +207,21 @@ def give_improvement_ideas(filename):
             overall_scores_output += scores_output
     return overall_improvement_output, overall_scores_output
 
+import time
 @app.route('/feedback', methods=['GET'])
 def feedback():
-    overall_improvement_output, overall_scores_output = give_improvement_ideas("silverpizzeria.com")
+    start_time = time.time()
+    print(start_time)
+    print(request.args.get('text'))
+    overall_improvement_output, overall_scores_output = give_improvement_ideas(request.args.get('text'))
+    end_time = time.time()
+    print(end_time)
+    delta_time = end_time - start_time
+    print(delta_time)
+    print(overall_improvement_output)
+    print(overall_scores_output)
     scores = [int(score) for score in re.findall(r'\b\d+\b', overall_scores_output)]
-    return render_template('feedback.html', scores=scores, ideas=overall_improvement_output)
+    return render_template('feedback.html', scores=scores, improvement_ideas=overall_improvement_output)
 
 if __name__ == '__main__':
     app.run(debug=True)

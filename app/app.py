@@ -3,6 +3,7 @@ import re
 from flask import Flask, render_template, request, jsonify
 from openai import OpenAI
 import tiktoken
+import os
 
 # Internal
 from scrape import fetch_source

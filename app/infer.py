@@ -1,5 +1,6 @@
 import tiktoken
 from openai import OpenAI
+import os
 
 criteria="""Usability
 Explanation: The interface should be intuitive and easy to use, allowing users to achieve their goals effectively and efficiently without unnecessary complexity.
@@ -74,7 +75,17 @@ def create_chunks(input_code, chunk_size=125000, model_name='gpt-4o'):
     string_chunks = [encoding.decode(chunk) for chunk in token_chunks]
     return string_chunks
 
-def give_improvement_ideas(input_code):
+
+def give_improvement_ideas(filename):
+    input_code = ""
+    for root, _, files in os.walk(filename):
+        for file in files:
+            file_path = os.path.join(root, file)
+            try:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    input_code += f.read() + '\n'
+            except Exception as e:
+                print(f"Could not read file {file_path}: {e}")
     chunks = create_chunks(input_code)
     overall_improvement_output = ""
     overall_summary_output = ""
@@ -159,16 +170,3 @@ def give_improvement_ideas(input_code):
             scores_output = completion.choices[0].message.content
             overall_scores_output += scores_output
     return overall_improvement_output, overall_scores_output
-
-input_file_path = "The New York Times - Breaking News, US News, World News and Videos.html"
-improvements_file_path = "improvement_ideas.txt"
-scores_file_path = "scores.txt"
-with open(input_file_path, 'r', encoding='utf-8') as file:
-    website_code = file.read()
-    overall_improvement_output, overall_scores_output = give_improvement_ideas(website_code)
-    with open(improvements_file_path, 'w', encoding='utf-8') as file:
-        file.write(overall_improvement_output)
-    with open(scores_file_path, 'w', encoding='utf-8') as file:
-        file.write(overall_scores_output)
-print(f"Improvement ideas have been written to {improvements_file_path}")
-print(f"Scores have been written to {scores_file_path}")

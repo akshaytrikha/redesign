@@ -1,14 +1,12 @@
-import tiktoken
-from openai import OpenAI
-from flask import Flask, render_template, request, jsonify
-import re
-import os
-
 # External
+import re
 from flask import Flask, render_template, request, jsonify
+from openai import OpenAI
+import tiktoken
 
 # Internal
 from scrape import fetch_source
+from infer import give_improvement_ideas
 
 app = Flask(__name__)
 
@@ -31,7 +29,6 @@ def scrape():
         return jsonify(result), 200
     else:
         return jsonify(result), 400
-
 
 criteria="""Usability
 Explanation: The interface should be intuitive and easy to use, allowing users to achieve their goals effectively and efficiently without unnecessary complexity.

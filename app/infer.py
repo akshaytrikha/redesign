@@ -1,3 +1,7 @@
+import tiktoken
+from openai import OpenAI
+import os
+
 criteria="""Usability
 Explanation: The interface should be intuitive and easy to use, allowing users to achieve their goals effectively and efficiently without unnecessary complexity.
 Key Aspects: Ease of Learning: New users should be able to learn how to use the interface quickly.

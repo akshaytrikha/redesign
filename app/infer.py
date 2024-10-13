@@ -123,10 +123,8 @@ def give_improvement_ideas(url):
             file_path = os.path.join(root, file)
             try:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                    suffix = Path(file_path).suffix
-                    if suffix in {'.html', '.css', '.js'}:
-                        minified_code = minify(f.read(), suffix)
-                        input_code += minified_code + '\n'
+                    minified_code = minify(f.read(), Path(file_path).suffix)
+                    input_code += minified_code + '\n'
             except Exception as e:
                 print(f"Could not read file {file_path}: {e}")
 
@@ -216,6 +214,3 @@ def give_improvement_ideas(url):
             scores_output = completion.choices[0].message.content
             overall_scores_output += scores_output
     return overall_improvement_output, overall_scores_output
-
-
-give_improvement_ideas("sliverpizzeria.com")

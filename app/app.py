@@ -42,8 +42,9 @@ def feedback():
     print(delta_time)
     print(overall_improvement_output)
     print(overall_scores_output)
+    improvements = [item for item in overall_improvement_output.split("-")]
     scores = [int(score) for score in re.findall(r'\b\d+\b', overall_scores_output)]
-    return render_template('feedback.html', scores=scores, improvement_ideas=overall_improvement_output)
+    return render_template('feedback.html', scores=scores, improvements=improvements)
 
 if __name__ == '__main__':
     app.run(debug=True)

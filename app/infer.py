@@ -81,13 +81,11 @@ def give_improvement_ideas(url):
     print(url)
     for root, _, files in os.walk(url):
         for file in files:
-            print(file)
             file_path = os.path.join(root, file)
             print(file_path)
             try:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                     input_code += f.read() + '\n'
-                    print(input_code)
             except Exception as e:
                 print(f"Could not read file {file_path}: {e}")
     chunks = create_chunks(input_code)

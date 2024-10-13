@@ -13,11 +13,20 @@
   <body>
     <div class="container">
       <h1>Here is your feedback!</h1>
-      {% for score in scores %}
-      <li>Score: {{ score }}</li>
-      {% endfor %}
+      <li>Usability: {{ scores[0] }}</li>
+      <li>Consistency: {{ scores[1] }}</li>
+      <li>Clarity: {{ scores[2] }}</li>
+      <li>Feedback: {{ scores[3] }}</li>
+      <li>Accessibility: {{ scores[4] }}</li>
+      <li>Responsiveness: {{ scores[5] }}</li>
+      <li>Aesthetic Design: {{ scores[6] }}</li>
+      <li>Error Prevention and Handling: {{ scores[7] }}</li>
+      <li>Flexibility and Efficiency: {{ scores[8] }}</li>
+      <li>User Control and Freedom: {{ scores[9] }}</li>
       <h1>Improvement Ideas:</h1>
-      {{ improvement_ideas }}
+      {% for improvement in improvements %}
+      <li>{{ improvement }}</li>
+      {% endfor %}
     </div>
   </body>
 </html>

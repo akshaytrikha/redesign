@@ -123,8 +123,10 @@ def give_improvement_ideas(url):
             file_path = os.path.join(root, file)
             try:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                    minified_code = minify(f.read(), Path(file_path).suffix)
-                    input_code += minified_code + '\n'
+                    suffix = Path(file_path).suffix
+                    if suffix in {'.html', '.css', '.js'}:
+                        minified_code = minify(f.read(), )
+                        input_code += minified_code + '\n'
             except Exception as e:
                 print(f"Could not read file {file_path}: {e}")
 
